@@ -1,24 +1,29 @@
-const User = require('../model/User');
+const User = require("../model/User");
+const CustomError = require("../helpers/error/CustomError");
+const asyncErrorWrapper = require("express-async-handler");
+const sendJwtToClient = require("../helpers/authorization/tokenHelpers");
 
-const register = async (request, response, next) => {
-    //POST DATA
-    const name = "Ledun Ledun"
-    const email = "Ledun@ledun.com"
-    const password = "12345";
+const register = asyncErrorWrapper(async (request, response, next) => {
+  const { name, email, password, role } = request.body;
 
-    const user = await User.create({
-        name,
-        email,
-        password,
-    });
+  const user = await User.create({
+    name,
+    email,
+    password,
+    role,
+  });
 
-    response.status(200)
-    response.json({
-        success: true,
-        data: user
-    });
+  sendJwtToClient(user, response);
+});
+
+const tokentest = (req, res, next) => {
+  res.json({
+    success: true,
+    message: "Welcome",
+  });
 };
 
 module.exports = {
-    register
+  register,
+  tokentest,
 };
