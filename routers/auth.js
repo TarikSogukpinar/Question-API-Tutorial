@@ -1,14 +1,26 @@
 const express = require("express");
-const { register, tokentest } = require("../controllers/auth");
-
 const {
-  getAccessToRoute,
-} = require("../middlewares/errors/authorization/auth");
-
+  register,
+  login,
+  getUser,
+  logout,
+  imageUpluoad,
+  forgotPassword
+} = require("../controllers/auth");
+const profileImageUpluoad = require("../middlewares/libraries/profileImagesUpluoad");
+const { getAccessToRoute } = require("../middlewares/authorization/auth");
 
 const router = express.Router();
 
 router.post("/register", register);
-router.get("/tokentest", getAccessToRoute, tokentest);
+router.post("/login", login);
+router.get("/profile", getAccessToRoute, getUser);
+router.get("/logout", getAccessToRoute, logout);
+router.post("/forgotpassword", forgotPassword);
+router.get(
+  "/upluoad",
+  [getAccessToRoute, profileImageUpluoad.single("profile_image")],
+  imageUpluoad
+);
 
 module.exports = router;
